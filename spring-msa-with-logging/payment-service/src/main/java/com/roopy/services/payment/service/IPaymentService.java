@@ -4,6 +4,6 @@ import com.roopy.services.payment.domain.Order;
 
 public interface IPaymentService {
 	
-	public String save(Order order) throws Exception;
+	public Order save(Order order) throws Exception;
 	
 }

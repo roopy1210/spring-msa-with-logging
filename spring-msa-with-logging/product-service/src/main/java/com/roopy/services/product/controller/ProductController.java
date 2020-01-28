@@ -1,5 +1,7 @@
 package com.roopy.services.product.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.roopy.services.product.domain.Order;
+import com.roopy.services.product.domain.OrderDetail;
 import com.roopy.services.product.service.IProductService;
 
 @RestController
@@ -19,10 +22,10 @@ public class ProductController {
 	private IProductService productService;
 
 	@RequestMapping(value = "/products", method = RequestMethod.POST)
-	public void save(HttpServletRequest request, HttpServletResponse response,
+	public List<OrderDetail> save(HttpServletRequest request, HttpServletResponse response,
 			@RequestBody Order order) throws Exception {
 		
 		/*상품수량업데이트*/
-		productService.save(order);
+		return productService.save(order);
 	}
 }

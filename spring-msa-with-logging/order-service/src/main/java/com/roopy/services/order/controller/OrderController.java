@@ -2,11 +2,14 @@ package com.roopy.services.order.controller;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.roopy.services.order.domain.Order;
+import com.roopy.services.order.domain.OrderDetail;
+import com.roopy.services.order.domain.Payment;
 import com.roopy.services.order.helper.IDGeneratorHelper;
 import com.roopy.services.order.service.IOrderService;
 import com.roopy.services.order.service.IPaymentService;
@@ -23,6 +28,8 @@ import com.roopy.services.order.service.IProductService;
 
 @RestController
 public class OrderController {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(OrderController.class);
 	
 	@Autowired
 	private IOrderService orderService;
@@ -35,7 +42,8 @@ public class OrderController {
 	
 	@Autowired
 	private IDGeneratorHelper idGenerator;
-
+	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/order", method = RequestMethod.POST)
 	public HashMap<String,Object> order(HttpServletRequest request, HttpServletResponse response,
 			@RequestBody Order order) throws Exception {
@@ -60,6 +68,9 @@ public class OrderController {
 		
 		/*주문정보저장*/
 		if (paymentResultCode == 200) {
+			// 결제 처리 결과 처리 출력 및 결제정보 설정
+			order.setPayments((List<Payment>) paymentRetObj.get("data"));
+			
 			// 상품재고수량 업데이트
 			HashMap<String,Object> productRetObj = productService.updateProductQty(order);
 			
@@ -77,6 +88,9 @@ public class OrderController {
 				return retObj;
 			}
 			
+			// 상품재고 처리 결과 처리 출력 및 상품정보 설정
+			order.setOrderDetails((List<OrderDetail>) productRetObj.get("data"));
+			
 			// 결제처리, 상품재고수량 업데이트 처리가 정상적으로 된경우 주문상태코드를 완료 변경 처리
 			order.setOrderStatus("C");
 			
@@ -89,10 +103,12 @@ public class OrderController {
 			
 			retObj.put("code", -1);
 			retObj.put("msg", paymentRetObj.get("msg"));
-			retObj.put("data", order);
 			
 			return retObj;
 		}
+		
+		// 주문정보 출력
+		LOGGER.info("Order Status Changed: {}", HttpStatus.SC_OK);
 		
 		// 최종주문정보 조회
 		retObj.put("code", HttpStatus.SC_OK);

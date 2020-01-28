@@ -1,5 +1,7 @@
 package com.roopy.services.payment.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -10,19 +12,22 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.roopy.services.payment.domain.Order;
+import com.roopy.services.payment.domain.Payment;
 import com.roopy.services.payment.service.IPaymentService;
 
 @RestController
 public class PaymentController {
-
+	
 	@Autowired
 	private IPaymentService paymentService;
-
+	
 	@RequestMapping(value = "/payment", method = RequestMethod.POST)
-	public String payment(HttpServletRequest request, HttpServletResponse response,
+	public List<Payment> payment(HttpServletRequest request, HttpServletResponse response,
 			@RequestBody Order order) throws Exception {
 		
-		return paymentService.save(order);
+		order = paymentService.save(order);
+		
+		return order.getPayments();
 	}
 	
 }

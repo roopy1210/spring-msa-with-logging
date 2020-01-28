@@ -203,15 +203,5 @@ public class Order implements Serializable {
 			return false;
 		return true;
 	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "Order [orderId=" + orderId + ", ordererId=" + ordererId + ", orderDtm=" + orderDtm + ", totalOrderAmt="
-				+ totalOrderAmt + ", orderDetails=" + orderDetails + ", payments=" + payments + ", toString()="
-				+ super.toString() + "]";
-	}
 	
 }

@@ -5,6 +5,12 @@ eureka:
   client:
     serviceUrl:
       defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}
+      
+logging:
+  level:
+    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
+  pattern:
+    file: "%d{HH:mm:ss.SSS} %-5level %msg%n"      
 
 spring:  
   application:
